@@ -92,12 +92,19 @@ document.querySelectorAll('.carousel').forEach(carousel => {
   let startY = null;
   let isDragging = false;
   let startTime = null;
+  let touchTimeout = null;
   
   track.addEventListener('touchstart', e => {
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
     isDragging = false;
     startTime = Date.now();
+    
+    // Clear any existing timeout
+    if (touchTimeout) {
+      clearTimeout(touchTimeout);
+      touchTimeout = null;
+    }
   });
   
   track.addEventListener('touchmove', e => {
@@ -108,10 +115,13 @@ document.querySelectorAll('.carousel').forEach(carousel => {
     const dx = currentX - startX;
     const dy = currentY - startY;
     
-    // Solo se il movimento orizzontale è maggiore di quello verticale
+    // Solo se il movimento orizzontale è chiaramente maggiore di quello verticale
     if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 15) {
       isDragging = true;
-      e.preventDefault(); // Prevent scrolling when swiping horizontally
+      // Solo previeni se siamo sicuri che è un gesto orizzontale
+      if (e.cancelable) {
+        e.preventDefault();
+      }
       
       if (Math.abs(dx) > 60) {
         if (dx < 0) current++;
@@ -128,6 +138,23 @@ document.querySelectorAll('.carousel').forEach(carousel => {
     startX = null;
     startY = null;
     isDragging = false;
+    
+    // Clear any existing timeout
+    if (touchTimeout) {
+      clearTimeout(touchTimeout);
+      touchTimeout = null;
+    }
+  });
+  
+  // Fallback per resettare le variabili in caso di eventi persi
+  track.addEventListener('touchcancel', e => {
+    startX = null;
+    startY = null;
+    isDragging = false;
+    if (touchTimeout) {
+      clearTimeout(touchTimeout);
+      touchTimeout = null;
+    }
   });
   track.addEventListener('transitionend', () => {
     if (current === cards.length - 1) jumpTo(1); // clone in fondo → prima reale
