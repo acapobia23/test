@@ -29,7 +29,6 @@ body {
   overflow: hidden;
   position: relative;
   padding: 0.5rem 0 1.6rem 0;
-  touch-action: pan-x pinch-zoom;
 }
 
 .carousel-track {
@@ -39,7 +38,6 @@ body {
   gap: 1rem;
   padding: 0 1rem;
   box-sizing: border-box;
-  touch-action: pan-x;
 }
 
 .carousel-card {
@@ -217,23 +215,17 @@ body {
   .static-card.static-card-horizontal .img-left {
     max-width: 100%;
   }
-  .carousel {
-    padding: 0.5rem 0 2rem 0;
-    touch-action: pan-x pinch-zoom;
-  }
-  .carousel-track {
-    touch-action: pan-x;
-    padding-left: 6px;
-    padding-right: 6px;
-    gap: 12px;
-  }
   .carousel-card {
     flex-direction: row-reverse;
     min-width: 320px;
     max-width: 100%;
     margin: 0;
-    touch-action: pan-x;
   }
+  .carousel-track {
+    padding-left: 6px;
+    padding-right: 6px;
+    gap: 12px;
+  } 
   .carousel-card .carousel-img {
     width: 80px;
     height: 80px;
