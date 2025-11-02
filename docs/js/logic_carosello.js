@@ -97,4 +97,4 @@ document.querySelectorAll('.carousel').forEach(carousel => {
     });
     if (loaded === imgs.length) jumpTo(2);
   }
-});
+}); 

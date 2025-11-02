@@ -549,10 +549,10 @@ body {
 }
 
 .carousel-card .carousel-img {
-  width: 80px !important ;
-  min-width: 0;
+  width: 80px !important;
   height: 80px !important;
-  object-fit: cover;
+  min-width: 0;
+  object-fit: contain; /* Mostra l'immagine per intero */
   align-self: center;
   border-radius: 0px !important;
   margin: 4px;
@@ -604,7 +604,7 @@ body {
     width: 80px !important;
     height: 80px !important;
     min-width: 0 !important;
-    object-fit: cover;
+    object-fit: contain; /* Mostra l'immagine per intero anche su desktop */
     margin: 4px;
     border-radius: 0px !important;
     align-self: center;
