@@ -14,6 +14,41 @@ document.querySelectorAll('.carousel').forEach(carousel => {
   const cards = Array.from(track.querySelectorAll('.carousel-card'));
   let current = 2; // card centrale reale (indice relativo ai cloni)
 
+  // Crea gli indicatori a puntini
+  const dotsContainer = document.createElement('div');
+  dotsContainer.className = 'carousel-dots';
+  dotsContainer.style.cssText = `
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding: 8px 0;
+  `;
+  
+  const dots = [];
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'carousel-dot';
+    dot.style.cssText = `
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #ccc;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    `;
+    dots.push(dot);
+    dotsContainer.appendChild(dot);
+    
+    // Aggiungi click handler per navigare
+    dot.addEventListener('click', () => {
+      current = i + 1; // +1 perché abbiamo il clone all'inizio
+      updateCarousel();
+    });
+  }
+  
+  carousel.appendChild(dotsContainer);
+
   function getGap() {
     const style = window.getComputedStyle(track);
     const gap = parseFloat(style.gap || style.columnGap || '16');
@@ -29,6 +64,13 @@ document.querySelectorAll('.carousel').forEach(carousel => {
     cards.forEach((card, i) => {
       card.classList.toggle('active', i === current);
     });
+    
+    // Aggiorna gli indicatori a puntini
+    dots.forEach((dot, i) => {
+      const isActive = (current - 1) === i; // -1 perché current tiene conto del clone iniziale
+      dot.style.backgroundColor = isActive ? '#20b2aa' : '#ccc'; // turchese per attivo, grigio per inattivo
+    });
+    
     const gap = getGap();
     const cardWidth = cards[0].offsetWidth;
     const paddingLeft = getHorizontalPadding();
@@ -63,6 +105,12 @@ document.querySelectorAll('.carousel').forEach(carousel => {
   track.addEventListener('transitionend', () => {
     if (current === cards.length - 1) jumpTo(1); // clone in fondo → prima reale
     if (current === 0) jumpTo(cards.length - 2); // clone in testa → ultima reale
+    
+    // Aggiorna i puntini anche dopo il salto per il loop
+    dots.forEach((dot, i) => {
+      const isActive = (current - 1) === i;
+      dot.style.backgroundColor = isActive ? '#20b2aa' : '#ccc';
+    });
   });
 
   // Swipe mouse (desktop)

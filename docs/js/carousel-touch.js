@@ -25,20 +25,17 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Monitora l'inizio delle animazioni del carosello
         carousel.addEventListener('transitionstart', function() {
-            console.log('Animazione carosello INIZIATA - disabilito scroll verticale');
             isCarouselAnimating = true;
         });
         
         // Monitora la fine delle animazioni del carosello
         carousel.addEventListener('transitionend', function() {
-            console.log('Animazione carosello FINITA - riabilito scroll verticale');
             isCarouselAnimating = false;
         });
         
         // Intercetta gli eventi di scroll globali durante l'animazione
         const preventVerticalScrollDuringAnimation = function(e) {
             if (isCarouselAnimating) {
-                console.log('Prevengo scroll verticale durante animazione carosello');
                 e.preventDefault();
                 e.stopPropagation();
                 return false;
@@ -54,13 +51,11 @@ document.addEventListener('DOMContentLoaded', function() {
             startY = e.touches[0].clientY;
             isDragging = false;
             isHorizontalScroll = false;
-            console.log('TouchStart - X:', startX, 'Y:', startY);
         }, { passive: true });
         
         carousel.addEventListener('touchmove', function(e) {
             // Se c'è un'animazione in corso, blocca tutto
             if (isCarouselAnimating) {
-                console.log('Touch bloccato durante animazione');
                 e.preventDefault();
                 return;
             }
@@ -73,11 +68,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const deltaX = Math.abs(currentX - startX);
             const deltaY = Math.abs(currentY - startY);
             
-            console.log('TouchMove - deltaX:', deltaX, 'deltaY:', deltaY, 'isDragging:', isDragging, 'isHorizontalScroll:', isHorizontalScroll);
-            
             // Calcola l'angolo del movimento
             const movementAngle = getMovementAngle(deltaX, deltaY);
-            console.log('Angolo movimento:', movementAngle.toFixed(1), '°');
             
             // Determina la direzione usando l'angolo
             if (!isDragging && (deltaX > 5 || deltaY > 5)) {
@@ -85,15 +77,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Movimento orizzontale o diagonale (≤45°)
                     isHorizontalScroll = true;
                     isDragging = true;
-                    console.log('DIREZIONE RILEVATA: ORIZZONTALE (angolo:', movementAngle.toFixed(1), '°)');
                 } else if (movementAngle >= (90 - MAX_ANGLE_DEGREES)) {
                     // Movimento molto verticale (≥45°)
                     isHorizontalScroll = false;
                     isDragging = true;
-                    console.log('DIREZIONE RILEVATA: VERTICALE (angolo:', movementAngle.toFixed(1), '°)');
-                } else {
-                    // Zona grigia (non dovrebbe mai accadere con 45°)
-                    console.log('ZONA GRIGIA - angolo:', movementAngle.toFixed(1), '° - aspetto movimento più chiaro');
                 }
             }
             
@@ -104,37 +91,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (deltaX > deltaY * 2) { // Deve essere almeno 2x più orizzontale
                         isHorizontalScroll = true;
                         isDragging = true;
-                        console.log('DIREZIONE RILEVATA: ORIZZONTALE (fallback) - deltaX:', deltaX, 'deltaY:', deltaY, 'ratio:', (deltaX/deltaY).toFixed(2));
                     } else if (deltaY > deltaX * 2) { // Deve essere almeno 2x più verticale
                         isHorizontalScroll = false;
                         isDragging = true;
-                        console.log('DIREZIONE RILEVATA: VERTICALE (fallback) - deltaX:', deltaX, 'deltaY:', deltaY, 'ratio:', (deltaY/deltaX).toFixed(2));
                     }
                     // Se non è chiaramente orizzontale o verticale, non fare nulla (zona grigia)
                 }
                 
                 // Se è scroll orizzontale, previeni lo scroll verticale
                 if (isHorizontalScroll) {
-                    console.log('Tentativo preventDefault - cancelable:', e.cancelable, 'defaultPrevented:', e.defaultPrevented);
                     if (e.cancelable) {
                         e.preventDefault();
-                        console.log('preventDefault APPLICATO');
-                    } else {
-                        console.log('preventDefault IGNORATO - evento non cancelable');
                     }
                 }
             } else if (isHorizontalScroll && isDragging) {
                 // Continua a prevenire anche per movimenti piccoli se abbiamo già determinato la direzione
                 if (e.cancelable) {
                     e.preventDefault();
-                    console.log('preventDefault CONTINUATO per movimento piccolo');
                 }
             }
         }, { passive: false });
         
         carousel.addEventListener('touchend', function(e) {
             // Reset delle variabili
-            console.log('TouchEnd - Reset variabili');
             startX = null;
             startY = null;
             isDragging = false;
@@ -143,7 +122,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         carousel.addEventListener('touchcancel', function(e) {
             // Reset delle variabili anche in caso di cancel
-            console.log('TouchCancel - Reset variabili');
             startX = null;
             startY = null;
             isDragging = false;
@@ -203,8 +181,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // Funzione di utilità per debug (opzionale)
 function debugCarouselTouch(enable = false) {
     if (!enable) return;
-    
-    console.log('Carousel Touch Debug abilitato');
     
     document.addEventListener('touchstart', function(e) {
         if (e.target.closest('.carousel-track')) {
