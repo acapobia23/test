@@ -58,6 +58,8 @@ body {
   max-width: 100%;
   padding: 0;
   transition: box-shadow 0.3s, transform 0.4s;
+  text-decoration: none;
+  color: inherit;
 }
 .carousel-card.active {
   box-shadow:
@@ -234,6 +236,17 @@ body {
     border-radius: 40px;
     align-self: center;
   }
+}
+
+.carousel-card:hover {
+  text-decoration: none;
+  color: inherit;
+  transform: scale(1.02);
+}
+
+.carousel-card:focus {
+  outline: 2px solid #3bd2c9;
+  outline-offset: 2px;
 }
 
 .carousel-card,

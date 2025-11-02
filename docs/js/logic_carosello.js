@@ -89,18 +89,45 @@ document.querySelectorAll('.carousel').forEach(carousel => {
 
   // Swipe touch
   let startX = null;
+  let startY = null;
+  let isDragging = false;
+  let startTime = null;
+  
   track.addEventListener('touchstart', e => {
     startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    isDragging = false;
+    startTime = Date.now();
   });
+  
   track.addEventListener('touchmove', e => {
-    if (startX === null) return;
-    const dx = e.touches[0].clientX - startX;
-    if (Math.abs(dx) > 40) {
-      if (dx < 0) current++;
-      if (dx > 0) current--;
-      updateCarousel();
-      startX = null;
+    if (startX === null || startY === null) return;
+    
+    const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
+    const dx = currentX - startX;
+    const dy = currentY - startY;
+    
+    // Solo se il movimento orizzontale è maggiore di quello verticale
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 15) {
+      isDragging = true;
+      e.preventDefault(); // Prevent scrolling when swiping horizontally
+      
+      if (Math.abs(dx) > 60) {
+        if (dx < 0) current++;
+        if (dx > 0) current--;
+        updateCarousel();
+        startX = null;
+        startY = null;
+      }
     }
+  });
+  
+  track.addEventListener('touchend', e => {
+    // Reset variables
+    startX = null;
+    startY = null;
+    isDragging = false;
   });
   track.addEventListener('transitionend', () => {
     if (current === cards.length - 1) jumpTo(1); // clone in fondo → prima reale
@@ -114,20 +141,60 @@ document.querySelectorAll('.carousel').forEach(carousel => {
   });
 
   // Swipe mouse (desktop)
-  let mouseDown = false, mouseStartX = null;
+  let mouseDown = false;
+  let mouseStartX = null;
+  let mouseDragging = false;
+  
   track.addEventListener('mousedown', e => {
     mouseDown = true;
     mouseStartX = e.clientX;
+    mouseDragging = false;
   });
+  
+  track.addEventListener('mousemove', e => {
+    if (!mouseDown) return;
+    const dx = Math.abs(e.clientX - mouseStartX);
+    if (dx > 15) {
+      mouseDragging = true;
+    }
+  });
+  
   track.addEventListener('mouseup', e => {
     if (!mouseDown) return;
-    const dx = e.clientX - mouseStartX;
-    if (Math.abs(dx) > 40) {
-      if (dx < 0) current++;
-      if (dx > 0) current--;
-      updateCarousel();
+    
+    if (mouseDragging) {
+      const dx = e.clientX - mouseStartX;
+      if (Math.abs(dx) > 60) {
+        if (dx < 0) current++;
+        if (dx > 0) current--;
+        updateCarousel();
+      }
+      // Prevent click if there was significant dragging
+      e.preventDefault();
+      e.stopPropagation();
     }
+    
     mouseDown = false;
+    mouseDragging = false;
+  });
+  
+  // Prevent context menu on long press
+  track.addEventListener('contextmenu', e => {
+    if (mouseDragging) {
+      e.preventDefault();
+    }
+  });
+
+  // Handle clicks on carousel cards
+  track.addEventListener('click', e => {
+    // Allow navigation if user didn't drag
+    if (!mouseDragging && !isDragging) {
+      const clickedCard = e.target.closest('a.carousel-card');
+      if (clickedCard && clickedCard.href) {
+        // Let the browser handle the navigation naturally
+        return true;
+      }
+    }
   });
 
   // All'avvio, posizionati sulla prima card reale SOLO dopo caricamento immagini
