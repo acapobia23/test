@@ -66,17 +66,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   <div id="optional-fields" class="optional-fields">
         <input type="text" id="date-picker" placeholder="Select a date" readonly>
-        <select id="guest-picker">
-          ${[...Array(6)].map((_,i)=>
-            `<option value="${i+1}">${i+1} Adult${i>0?'s':''}</option>`
-          ).join('')}
-        </select>
-        <select id="under-18">
-          <option value="0">No Minors</option>
-          ${[...Array(5)].map((_,i)=>
-            `<option value="${i+1}">${i+1} Minor${i>0?'s':''}</option>`
-          ).join('')}
-        </select>
         <input type="email" id="email" placeholder="example@email.com">
         <input type="tel" id="phone" placeholder="+39 123 456 7890">
         <textarea id="optional-request" placeholder="Optional Request"></textarea>
@@ -126,8 +115,6 @@ document.querySelector('.btn-form').addEventListener('click', () => {
       `📅 Date:  ${val("date-picker")}`,
     `👤 Name:  ${val("main-guest")}`,
     `🏠 Host:  ${val("host")}`,
-      `🧑‍🤝‍🧑 Adults: ${val("guest-picker")}`,
-      `👶 Minors: ${val("under-18")}`,
       `📧 Email: ${val("email")}`,
       `📞 Phone: ${val("phone")}`,
     ];
